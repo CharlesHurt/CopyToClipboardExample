@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CopyToClipboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <style>
+body {
+  font-family:arial, san serif;
+  line-height:1.3em;
+  padding:2em;
+}
+
+pre {
+  background-color:#efefef;
+  padding-left:2em;
+}
+  </style>
+</head>
+
+<body>
+  <h4>Brief history of programmatically copying to the clipboard:</h4>
+  <ol>
+    <li>At first, copying to a clipboard programmatically was considered a security risk.</li>
+    <li>Then someone figured a hack using Flash (zeroclipboard.js) See <a href="">https://github.com/zeroclipboard/zeroclipboard</a></li>
+    <li><code>document.execCommand</code> became available but Clipper.js was needed as a polyfill See <a href="">https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js</a></li>
+    <li>Currently <code>document.execCommand</code> is supported for all major browswers according to <a href="">http://caniuse.com/</a>.</li>
+  </ol>
+
+  <span id='idSource'>This is text to copy <button id='idCopyButton'>Copy</button></span>
+
+<pre>
+  // The code
+  $(document).ready(init)
+
+  function init() {
+    var copyBtn = document.querySelector('#idCopyButton');
+    copyBtn.addEventListener('click', function(event) {
+      // Select the text
+      var copySource = document.querySelector('#idSource');
+      var range = document.createRange();
+      range.selectNode(copySource);
+      window.getSelection().addRange(range);
+
+      try {
+        var successful = document.execCommand('copy');
+        var msg = successful ? 'successful' : 'unsuccessful';
+        console.log('Copy  command was ' + msg);
+      } catch(err) {
+        console.log('Oops, unable to copy');
+      }
+      window.getSelection().removeAllRanges();
+    });
+  }
+</pre>
+<footer><p>Notes:<br>For feature detection use: <code>document.queryCommandSupported()</code></p></footer>
+
+<script src="https://code.jquery.com/jquery-2.2.3.js"></script>
+<script>
+$(document).ready(init)
+
+function init() {
+  var copyBtn = document.querySelector('#idCopyButton');
+  copyBtn.addEventListener('click', function(event) {
+    // Select the text
+    var copySource = document.querySelector('#idSource');
+    var range = document.createRange();
+    range.selectNode(copySource);
+    window.getSelection().addRange(range);
+
+    try {
+      // Copy the selected text to clipboard
+      var successful = document.execCommand('copy');
+      var msg = successful ? 'successful' : 'unsuccessful';
+      console.log('Copy  command was ' + msg);
+    } catch(err) {
+      console.log('Oops, unable to copy');
+    }
+    // Unselect
+    window.getSelection().removeAllRanges();
+  });
+}
+
+</script>
+</body>
+</html>
